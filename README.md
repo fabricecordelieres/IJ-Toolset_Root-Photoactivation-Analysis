@@ -37,9 +37,19 @@ _**Eq. 2: Normalization**_
 ## How does it work ?
 The toolset works in a sequential fashion: a first tool will take care of extracting the images and registering the time point, a second tool will ask the user for images' orientation, a third tool will segment cells and extract data while calling the Colab script.
 
-<p align=center>![GUI](images/GUI.jpg)
 
 ### IJ Toolset
+	
+<p align=center><img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI.jpg">
+
+#### Step 1: Lif to Zip
+	
+#### Step 2: Orient Roots
+#### Step 3: Segment and quantify
+	
+### Colab script
+	
+	
 #### Graphical user interface:
 
 The user is provided with a Graphical User Interface (GUI) from where (s)he should select the images to work with, fill in the labelling tags (tags to be reused to name the different outputs) and parameters for pre-processing and analysis:
