@@ -57,7 +57,7 @@ The toolset works in a sequential fashion: a first tool will take care of extrac
 </p>
 
 #### Data structure for output
-The toolset will output many data. In order to keep everything sorted, a specific folder/subfolders structure is adopted. The datastructure is generated as the user is activating the different tools. For each of the following folders, a subfolder is created per lif file and contains one file per sequence:
+The toolset will output many data. In order to keep everything sorted, a specific folder/subfolders structure is adopted. The datastructure is generated as the user is activating the different tools. For each of the following folders, a subfolder is created per lif file and contains one file per sequence. This data structure is hosted in a user-defined root folder.
 	
 - _**dataToUpload.zip**_: Populated after step 3, contains all the csv files and detection check files. It is used by the Colab script to generate the XLSX files.
 - _**csv**_: Populated after step 3, it contains one csv file per sequence. It includes the area an integrated density (total fluorescence) for each cell (activated, n x bording and background).
@@ -69,9 +69,22 @@ The toolset will output many data. In order to keep everything sorted, a specifi
 - _**Registered_Oriented_with_ROIs**_: Populated after step 3, it includes zip files of the registered sequences, after cells have been detected.	
 
 #### Step 1: Lif to Zip
-This first tool performs three steps:
-	1. Extracting individual images from the lif file for each part of the sequence (2 parts per sequence: one before activation, the other one after activation).
-	2. Creating an hyperstack
+This first tool performs the following steps:
+
+1. As the user presses the Step 1 button, a graphical user interface (GUI) pops-up asking for 3 parameters:
+		- Where the lif files are: this apramete can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button.
+		- Where to save files: where to place the root folder for the output data structure.
+		- Median filtering radius: the radius of the median filter applied to stack summed projection, used for cells detections.
+		
+<p align=center>
+	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step1.png">
+</p>			
+
+2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt.
+3. Individual images from the lif file for each part of the sequence (2 parts per sequence: one before activation, the other one after activation) are extracted.
+4. An hyperstack is created from both parts of the sequence. This hyperstack is saved under output_folder/Raw/Lif_filename_without_extension/FRAP_XX.zip.
+5. The hyperstack is registered using the built-in Fiji plugin ["Correct 3D drift"](https://imagej.net/plugins/correct-3d-drift), using channel 2 as a reference (cell walls), allowing multi time-scale correction, using a maximum XYZ shift of 10 pixels. The result is saved under output_folder/Registered/Lif_filename_without_extension/FRAP_XX.zip.
+6. Previous result is projected using the "summed "option ans further processed using a median filter (user-entered radius). The resulting image is saved under output_folder/Proj/Lif_filename_without_extension/FRAP_XX.zip.
 	
 #### Step 2: Orient Roots
 #### Step 3: Segment and quantify
