@@ -15,6 +15,14 @@ The aim of this workflow is:
     5. Identify and label bording cells (bording cell 1 being the closest from the activated cells, on the root tip side, bording cell 1' same on the opposite side, bording cell 2 begin the second closest on the root tip side etc...)
     6. Identify the furthest cell from the activated cell: to be used for background evaluation.
     7. Quantify the area and the total fluorescence on all the cells of interest.
+
+<p align=center>
+	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/FRAP.jpg">
+</p>
+<p align=center>
+	<em><b>Example image and detections</b></em>
+</p>
+
 - For the Colab script:
     1. Create an XLSX file containing one sheet per individual sequence
     2. For each sheet:
@@ -29,10 +37,14 @@ The aim of this workflow is:
 		- Plot the average values +/- SD for each cell, as a function of time
 		
 _**Eq. 1: Background subtraction**_
-<p align=center>$Integrated\ density(Cell_{Background\ corrected})=Integrated\ density(Cell_{Raw})-\frac{Integrated\ density(Cell_{Background})}{Area(Cell_{Background})}*Area(Cell_{Raw})$
+<p align=center>
+	$Integrated\ density(Cell_{Background\ corrected})=Integrated\ density(Cell_{Raw})-\frac{Integrated\ density(Cell_{Background})}{Area(Cell_{Background})}*Area(Cell_{Raw})$
+</p>
 
 _**Eq. 2: Normalization**_
-<p align=center>$Normalised\ fluorescence(Cell)=\frac{Integrated\ density(Cell_{Background\ corrected})}{\sum_{i} Integrated\ density(Cell_{i, Background\ corrected})}$
+<p align=center>
+	$Normalised\ fluorescence(Cell)=\frac{Integrated\ density(Cell_{Background\ corrected})}{\sum_{i} Integrated\ density(Cell_{i, Background\ corrected})}$
+</p>
 
 ## How does it work ?
 The toolset works in a sequential fashion: a first tool will take care of extracting the images and registering the time point, a second tool will ask the user for images' orientation, a third tool will segment cells and extract data while calling the Colab script.
@@ -40,12 +52,22 @@ The toolset works in a sequential fashion: a first tool will take care of extrac
 
 ### IJ Toolset
 	
-<p align=center><img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI.jpg">
+<p align=center>
+	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI.jpg">
+</p>
 
 #### Data structure for output
-The toolset will output many data. In order to keep everything sorted, a specific folder/subfolders structure is adopted. The datastructure is generated as the user is activating the different tools.
+The toolset will output many data. In order to keep everything sorted, a specific folder/subfolders structure is adopted. The datastructure is generated as the user is activating the different tools. For each of the following folders, a subfolder is created per lif file and contains one file per sequence:
 	
-	
+- _**dataToUpload.zip**_: Populated after step 3, contains all the csv files and detection check files. It is used by the Colab script to generate the XLSX files.
+- _**csv**_: Populated after step 3, it contains one csv file per sequence. It includes the area an integrated density (total fluorescence) for each cell (activated, n x bording and background).
+- _**Detection_Checks**_: Populated after step 3, it includes all jpg files of the sequence summed projection, with an overlay of the detected ROIs. It allows the user to check for proper detection of cells.
+- _**params.txt**_: This file is populated as the toolset is used, after each step. It contains all information/parameters used for analysis and ensures passing parameters from one step to another, and documenting the full process. It ensures analysis reproducibility as it encloses all settings.
+- _**Proj**_: Populated after step 1, it includes zip files of the sequences summed projections.
+- _**Raw**_: Populated after step 1, it includes zip files of the raw sequences, after assembly from the lif file, before registration.
+- _**Registered**_: Populated after step 1, it includes zip files of the registered sequences.
+- _**Registered_Oriented_with_ROIs**_: Populated after step 3, it includes zip files of the registered sequences, after cells have been detected.	
+
 #### Step 1: Lif to Zip
 This first tool performs three steps:
 	1. Extracting individual images from the lif file for each part of the sequence (2 parts per sequence: one before activation, the other one after activation).
