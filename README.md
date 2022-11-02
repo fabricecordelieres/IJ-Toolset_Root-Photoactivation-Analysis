@@ -42,7 +42,14 @@ The toolset works in a sequential fashion: a first tool will take care of extrac
 	
 <p align=center><img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI.jpg">
 
+#### Data structure for output
+The toolset will output many data. In order to keep everything sorted, a specific folder/subfolders structure is adopted. The datastructure is generated as the user is activating the different tools.
+	
+	
 #### Step 1: Lif to Zip
+This first tool performs three steps:
+	1. Extracting individual images from the lif file for each part of the sequence (2 parts per sequence: one before activation, the other one after activation).
+	2. Creating an hyperstack
 	
 #### Step 2: Orient Roots
 #### Step 3: Segment and quantify
