@@ -18,27 +18,33 @@ The aim of this workflow is:
 - For the Colab script:
     1. Create an XLSX file containing one sheet per individual sequence
     2. For each sheet:
-        1. Copy the raw data
-        2. Correct the raw data for background as follows:
-    
-<p align=center> $Integrated\ density(Cell_{Background\ corrected})=Integrated\ density(Cell_{Raw})-\frac{Integrated\ density(Cell_{Background})}{Area(Cell_{Background})}*Area(Cell_{Raw})$</p>
-        
-        3. Normalize the data assuming the total fluorescence between the activated cell and bording cells is only exchanged. It is assumed the systems acts as a closed container: no material leaves or enters the system made of the activated cells and the bording cells. The total fluorescence over those cells of interest is therefore normalised to 1:
+		- Copy the raw data
+		- Correct the raw data for background (see eq. 1)
+		- Normalize the data assuming the total fluorescence between the activated cell and bording cells is only exchanged. It is assumed the systems acts as a closed container: no material leaves or enters the system made of the activated cells and the bording cells. The total fluorescence over those cells of interest is therefore normalised to 1 (see eq. 2)
+		- Plot a graph of normalized data vs time for all cells
+		- Add to the sheet a snapshot of the cell, presenting the detected cells
+    3. Create a summary sheet:
+		- Present the normalized data, for all datasets, for all detected cell
+		- For each cell, compute the average value, SD and effective
+		- Plot the average values +/- SD for each cell, as a function of time
+		
+_**Eq. 1: Background subtraction**_
+<p align=center>$Integrated\ density(Cell_{Background\ corrected})=Integrated\ density(Cell_{Raw})-\frac{Integrated\ density(Cell_{Background})}{Area(Cell_{Background})}*Area(Cell_{Raw})$
 
-<p align=center> $Normalised\ fluorescence(Cell)=\frac{Integrated\ density(Cell_{Background\ corrected})}{\sum_{i} Integrated\ density(Cell_{i, Background\ corrected})}$</p>
-
-
-
-, captured on a widefield microscope. The sample is a spread of isolated synaptosomes, labelled for two proteins of interest. The aim is to quantify the proteins' proximity and their recruitment on the structures, on a structure per structure basis.
+_**Eq. 2: Normalization**_
+<p align=center>$Normalised\ fluorescence(Cell)=\frac{Integrated\ density(Cell_{Background\ corrected})}{\sum_{i} Integrated\ density(Cell_{i, Background\ corrected})}$
 
 ## How does it work ?
-The macro works in a sequential fashion: in order to isolate synaptosomes, images are first pre-processed then segmented. Candidates particles are then displayed for the user to pick-up the actual structures of interest and reject false positive detections (aggregates, precipitated antibody, dust etc...). Analysis is then performed on validated synaptosomes, and extracted data displayed both as tables and graphs.
+The toolset works in a sequential fashion: a first tool will take care of extracting the images and registering the time point, a second tool will ask the user for images' orientation, a third tool will segment cells and extract data while calling the Colab script.
 
+<p align=center>![GUI](images/GUI.jpg)
+
+### IJ Toolset
 #### Graphical user interface:
 
-The user is provided withn a Graphical User Interface (GUI) from where (s)he should select the images to work with, fill in the labelling tags (tags to be reused to name the different outputs) and parameters for pre-processing and analysis:
+The user is provided with a Graphical User Interface (GUI) from where (s)he should select the images to work with, fill in the labelling tags (tags to be reused to name the different outputs) and parameters for pre-processing and analysis:
 
-![GUI](images/GUI.jpeg)
+
 
 * *Size of detection square*: used to isolate each synaptosome.
 * *Radius for spots filtering*: radius used to perform local filtering during the pre-processing step (gaussian blur and median filtering).
