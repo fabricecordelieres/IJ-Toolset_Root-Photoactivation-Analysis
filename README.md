@@ -131,53 +131,47 @@ This final tool performs cells segmentation and quantifications as follows:
 
 2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt.
 3. For each dataset, for each sequence:
-	- The projection is loaded.
-	- In case orientation has been labelled as reversed, the image is flipped horizontally.
-	- Channels are splitted, only channel 2 (cell walls) being retained.
-	- Image's contrast is locally enhanced using Fiji's integrated ["CLAHE" plugin](https://imagej.net/plugins/clahe) (fixed parameters: block size: 127, histogram bin: 256, maximum slope: 3).
-	- The image is subjected to background subtraction.
-	- An automated threshold is set, using the ["Yen" algorithm](https://imagej.net/plugins/auto-threshold).
-	- Mesurements are set to quantify the area an integrated density (ie total fluorescence) in each ROI.
-	- The "Analyze Particles" function is called, isolating individual cells which size is below the user-defined limit. The ROIs are pushed to the ROI Manager.
-	- Based on the highest integrated density, the activated cell is identified.
-	- The two bording cells from the first layer are identified as the closest cells from the activated cells. They are oriented as the root tip is supposed to be on the left side: Bording Cell 1 is on the left side of the Activated cell, Bording Cell 1' is on its right (ie $x_{Bording\ Cell 1}$ < $x_{Activated\ Cell}$ < $x_{Bording\ Cell 1'}$).
-	- For each bording cell from the first layer on, the reference cell is taken from the previous bording layer, Bording Cell N being identified on the left side of Bording Cell N-1 and Bording Cell N' being identified on the right side of Bording Cell N-1'.
-	- The Background Cell is identified as the detected cell that is the furthest away from the Activated Cell.
-	- Based on these rules, the ROIs are identified, the ROI Manager is emptied the loaded with the relevent ROIs. Each individual ROI is properly renamed.
-	- A jpg image is saved is saved under output_folder/Detection_Checks/Lif_filename_without_extension/FRAP_XX.jpg, presenting the dual channel image, overlayed with the named ROIs.
-	- The corresponding registered stack is loaded from output_folder/Registered/Lif_filename_without_extension/FRAP_XX.zip.
-	- In case orientation has been labelled as reversed, the image is flipped horizontally.
-	- ROIs are overlayed to it, and the "Multi-measure" function is called. It generates a results table, save under output_folder/csv/Lif_filename_without_extension/FRAP_XX.csv.
-	- The stack, carying the ROIs as an overlay, is saved under output_folder/Registered_Oriented_with_ROIs/Lif_filename_without_extension/FRAP_XX.zip.
-5. Once all datasets have been reviewed, orientations are stored in the output_folder/params.txt file.
+	1. The projection is loaded.
+	2. In case orientation has been labelled as reversed, the image is flipped horizontally.
+	3. Channels are splitted, only channel 2 (cell walls) being retained.
+	4. Image's contrast is locally enhanced using Fiji's integrated ["CLAHE" plugin](https://imagej.net/plugins/clahe) (fixed parameters: block size: 127, histogram bin: 256, maximum slope: 3).
+	5. The image is subjected to background subtraction.
+	6. An automated threshold is set, using the ["Yen" algorithm](https://imagej.net/plugins/auto-threshold).
+	7. Mesurements are set to quantify the area an integrated density (ie total fluorescence) in each ROI.
+	8. The "Analyze Particles" function is called, isolating individual cells which size is below the user-defined limit. The ROIs are pushed to the ROI Manager.
+	9. Based on the highest integrated density, the activated cell is identified.
+	10. The two bording cells from the first layer are identified as the closest cells from the activated cells. They are oriented as the root tip is supposed to be on the left side: Bording Cell 1 is on the left side of the Activated cell, Bording Cell 1' is on its right (ie $x_{Bording\ Cell 1}$ < $x_{Activated\ Cell}$ < $x_{Bording\ Cell 1'}$).
+	11. For each bording cell from the first layer on, the reference cell is taken from the previous bording layer, Bording Cell N being identified on the left side of Bording Cell N-1 and Bording Cell N' being identified on the right side of Bording Cell N-1'.
+	12. The Background Cell is identified as the detected cell that is the furthest away from the Activated Cell.
+	13. Based on these rules, the ROIs are identified, the ROI Manager is emptied the loaded with the relevent ROIs. Each individual ROI is properly renamed.
+	14. A jpg image is saved is saved under output_folder/Detection_Checks/Lif_filename_without_extension/FRAP_XX.jpg, presenting the dual channel image, overlayed with the named ROIs.
+	15. The corresponding registered stack is loaded from output_folder/Registered/Lif_filename_without_extension/FRAP_XX.zip.
+	16. In case orientation has been labelled as reversed, the image is flipped horizontally.
+	17. ROIs are overlayed to it, and the "Multi-measure" function is called. It generates a results table, save under output_folder/csv/Lif_filename_without_extension/FRAP_XX.csv.
+	18. The stack, carying the ROIs as an overlay, is saved under output_folder/Registered_Oriented_with_ROIs/Lif_filename_without_extension/FRAP_XX.zip.
+5. Once all datasets have been processed, parameters are stored in the output_folder/params.txt file.
+6. 
 	
 ### Colab script
 	
 
 
-## How to use it ?
-### Macro ImageJ (versions 1 to 3):
+## How to install/use it ?
 
-1. Update ImageJ : Help/update puis Ok.
-2. Drag and drop the macro file onto ImageJ's toolbar.
-3. Open both images to analyze.
-4. Navigate to Macro/Run Macro within the macro window.
+The toolset mostly relies on functions and plugins that are alredy embarqued within Fiji. Step 3, however, requires a separate plugin that should be installed before using the toolset:
+1. Download [Zip_It.jar](https://github.com/fabricecordelieres/IJ-Plugin_Zip-It/releases/tag/v1.0).
+3. Drag-and-drop the .jar file to your ImageJ/Fiji toolbar.
+4. In the File saver window, press Ok.
+5. Restart Fiji/ImageJ.
 
-### Toolset ImageJ (version 4 to 6):
-
-1. Update ImageJ : Help/update puis Ok.
-2. Copy/Paste the macro file to ImageJ's instalaltion folder, in macros/toolset.
+The toolset isntallation is quite straightforward:
+1. Copy/Paste the toolset file to Fiji's installation folder, in macros/toolset.
 3. Under the ImageJ toolbar, on the right-most side, click on the red double arrow and select the appropriate toolset (choose "Startup macro" to go back to tthe original status).
-4. Default ImageJ tools have partly been replaced with your toolset's buttons.
+4. Default ImageJ tools have partly been replaced by your toolset's buttons.
 
-### Toolset ImageJ (version >=7):
-The toolset embarks randomization capability that require a plugin.
-In addition to the previous procedure, you will need to install [RandomizerColocalization](https://github.com/flevet/RandomizerColocalization).
-The sources are available from [here](https://github.com/flevet/RandomizerColocalization). A compiled version is available from [here](https://github.com/fabricecordelieres/IJ-Toolset_SynaptosomesMacro/tree/master/Plugins#:~:text=RandomizerColocalization_.class)
-1. Download [RandomizerColocalization_.class](https://github.com/fabricecordelieres/IJ-Toolset_SynaptosomesMacro/raw/master/Plugins/RandomizerColocalization_.class).
-2. Drag-and-drop the .class file to your ImageJ/Fiji toolbar.
-3. In the File saver window, press Ok.
-4. Restart Fiji/ImageJ.
+To use the toolset, first activate it, then press the buttons.
+
+
 
 ## Revisions:
 ### Version 1: 22/10/28 
