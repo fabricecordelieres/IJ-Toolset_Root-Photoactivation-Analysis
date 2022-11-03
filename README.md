@@ -72,9 +72,9 @@ The toolset will output many data. In order to keep everything sorted, a specifi
 This first tool performs the following steps:
 
 1. As the user presses the Step 1 button, a graphical user interface (GUI) pops-up asking for 3 parameters:
-		- Where the lif files are: this parameter can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button.
-		- Where to save files: where to place the root folder for the output data structure.
-		- Median filtering radius: the radius of the median filter applied to stack summed projection, used for cells detections.
+	- _**Where the lif files are**_: this parameter can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button.
+	- _**Where to save files**_: where to place the root folder for the output data structure.
+	- _**Median filtering radius**_: the radius of the median filter applied to stack summed projection, used for cells detections.
 		
 <p align=center>
 	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step1.png">
@@ -87,7 +87,7 @@ This first tool performs the following steps:
 6. Previous result is projected using the "summed "option ans further processed using a median filter (user-entered radius). The resulting image is saved under output_folder/Proj/Lif_filename_without_extension/FRAP_XX.zip.
 	
 #### Step 2: Orient Roots
-This second tool performs the following steps:
+This second tool allows the user to check and correct root tip's orientation as follows:
 
 1. As the user presses the Step 2 button, a GUI pops-up asking only one parameters: where the params.txt file is. This parameter can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button. NB: in case Step 2 is pressed after Step 1 has been pressed, the field is already filled with the proper link.
 
@@ -95,7 +95,7 @@ This second tool performs the following steps:
 	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step2.png">
 </p>			
 
-2. Once the GUI has been Oked, A first montage is displayed where green arrows are pointing to the left. In case one root tip is on the opposite direction, simply click on the relevent thumbnail: the arrow should revert and become red. NB: instructions can be found in Fiji's status bar.
+2. Once the GUI has been Oked, a first montage is displayed where green arrows are pointing to the left. In case one root tip is on the opposite direction, simply click on the relevent thumbnail: the arrow should revert and become red. NB: instructions can be found in Fiji's status bar. NB2: it may take time for the macro to take into account the request to revert orientation: click again ! The "clicking" event is monitored every 150msec by default. A variable, at the start of the toolset, is used to define this delay (its name has conveniently been named... delay).
 
 <p align=center>
 	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/Status_bar_instructions.png">
@@ -116,6 +116,40 @@ This second tool performs the following steps:
 
 
 #### Step 3: Segment and quantify
+This final tool performs cells segmentation and quantifications as follows:
+
+1. As the user presses the Step 3 button, a graphical user interface (GUI) pops-up asking for 5 parameters:
+	- _**Parameters file**_: this parameter can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button. NB: in case Step 3 is pressed after Step 1 or 2 has been pressed, the field is already filled with the proper link.
+	- _**Number of layers cells to detect**_: this defines how far from the activation cells quantification should be performed. A value of 2 will consider two layers of cells in both directions (4 cells in total).
+	- _**Background subtraction radius (pixels)**_: this parameter is used as the influence radius, when calling the "subtract background" function in order to ease the cell detection process..
+	- _**Minimum cell size (microns)**_: self-explanatory, allows excluding debris and small cells from detection.
+	- _**Detection ROIs enlargement (pixels)**_: as the cells are detected from the cell walls, the actual ROIs might be shrunk as compared to the actual cells borders. This parameters allows compensating for this artefact by dilating the detected ROIs.
+
+<p align=center>
+	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step3.png">
+</p>			
+
+2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt.
+3. For each dataset, for each sequence:
+	- The projection is loaded.
+	- In case orientation has been labelled as reversed, the image is flipped horizontally.
+	- Channels are splitted, only channel 2 (cell walls) being retained.
+	- Image's contrast is locally enhanced using Fiji's integrated ["CLAHE" plugin](https://imagej.net/plugins/clahe) (fixed parameters: block size: 127, histogram bin: 256, maximum slope: 3).
+	- The image is subjected to background subtraction.
+	- An automated threshold is set, using the ["Yen" algorithm](https://imagej.net/plugins/auto-threshold).
+	- Mesurements are set to quantify the area an integrated density (ie total fluorescence) in each ROI.
+	- The "Analyze Particles" function is called, isolating individual cells which size is below the user-defined limit. The ROIs are pushed to the ROI Manager.
+	- Based on the highest integrated density, the activated cell is identified.
+	- The two bording cells from the first layer are identified as the closest cells from the activated cells. They are oriented as the root tip is supposed to be on the left side: Bording Cell 1 is on the left side of the Activated cell, Bording Cell 1' is on its right (ie $x_{Bording\ Cell 1}$ < $x_{Activated\ Cell}$ < $x_{Bording\ Cell 1'}$).
+	- For each bording cell from the first layer on, the reference cell is taken from the previous bording layer, Bording Cell N being identified on the left side of Bording Cell N-1 and Bording Cell N' being identified on the right side of Bording Cell N-1'.
+	- The Background Cell is identified as the detected cell that is the furthest away from the Activated Cell.
+	- Based on these rules, the ROIs are identified, the ROI Manager is emptied the loaded with the relevent ROIs. Each individual ROI is properly renamed.
+	- A jpg image is saved is saved under output_folder/Detection_Checks/Lif_filename_without_extension/FRAP_XX.jpg, presenting the dual channel image, overlayed with the named ROIs.
+	- The corresponding registered stack is loaded from output_folder/Registered/Lif_filename_without_extension/FRAP_XX.zip.
+	- In case orientation has been labelled as reversed, the image is flipped horizontally.
+	- ROIs are overlayed to it, and the "Multi-measure" function is called. It generates a results table, save under output_folder/csv/Lif_filename_without_extension/FRAP_XX.csv.
+	- The stack, carying the ROIs as an overlay, is saved under output_folder/Registered_Oriented_with_ROIs/Lif_filename_without_extension/FRAP_XX.zip.
+5. Once all datasets have been reviewed, orientations are stored in the output_folder/params.txt file.
 	
 ### Colab script
 	
