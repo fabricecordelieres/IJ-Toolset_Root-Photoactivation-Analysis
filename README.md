@@ -188,13 +188,15 @@ The Colab script will take care of compiling all the informations into XLSX file
 
 ## How to install/use it ?
 
-The toolset mostly relies on functions and plugins that are alredy embarqued within Fiji. Step 3, however, requires a separate plugin that should be installed before using the toolset:
+The [release page](https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/releases/tag/v1.0) displays a download link for Root_Photoactivation_Analysis_Workflow.zip file. Once unzipped, it contains everything that needs to be installed.
+
+*The toolset mostly relies on functions and plugins that are alredy embarqued within Fiji. Step 3, however, requires a separate plugin that should be installed before using the toolset:*
 1. Download [Zip_It.jar](https://github.com/fabricecordelieres/IJ-Plugin_Zip-It/releases/tag/v1.0).
 3. Drag-and-drop the .jar file to your ImageJ/Fiji toolbar.
 4. In the File saver window, press Ok.
 5. Restart Fiji/ImageJ.
 
-The toolset installation is quite straightforward:
+*The toolset installation is quite straightforward:*
 1. Copy/Paste the toolset file to Fiji's installation folder, in macros/toolset.
 3. Under the ImageJ toolbar, on the right-most side, click on the red double arrow and select the appropriate toolset (choose "Startup macro" to go back to the original status).
 4. Default ImageJ tools have partly been replaced by your toolset's buttons.
