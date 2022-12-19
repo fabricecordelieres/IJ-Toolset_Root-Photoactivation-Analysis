@@ -106,6 +106,7 @@ run("Close All");
 			if(flip==""){
 				flip=0;
 			}
+			roiManager("UseNames", "true");
 			measureCells(stack);
 		}
 	}
@@ -523,13 +524,11 @@ function measureCells(stack){
 	
 	ori=getTitle();
 	
-	roiManager("Show All with labels");
-	roiManager("UseNames", "true");
-	
 	//Check ROIs
 	isDetectionOk=getBoolean("Is detection Ok ?");
 	if(!isDetectionOk){
 		run("Remove Overlay");
+		roiManager("Show All with labels");
 		setTool("freehand");
 		waitForUser("1-Click on the ROI to modify in the ROI Manager\n2-Draw/adjust the ROI\n3-Click on 'update' in the ROI Manager\n4-Repeat for all ROIs then press Ok");
 		setTool("rectangle");
@@ -552,6 +551,7 @@ function measureCells(stack){
 	
 	//Performs measurements
 	run("Set Measurements...", "area integrated redirect=None decimal=4");
+	roiManager("deselect");
 	roiManager("Multi Measure");
 	saveAs("Results", replace(replace(stack, "Registered_Oriented_with_ROIs", "csv"), ".zip", ".csv"));
 	selectWindow("Results");
