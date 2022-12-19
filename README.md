@@ -115,10 +115,46 @@ This second tool allows the user to check and correct root tip's orientation as 
 5. Once all datasets have been reviewed, orientations are stored in the output_folder/params.txt file.
 
 
-#### Step 3: Segment and quantify
-This final tool performs cells segmentation and quantifications as follows:
+#### Step 3: Segment
+This third tool performs automated cells segmentation:
 
 1. As the user presses the Step 3 button, a graphical user interface (GUI) pops-up asking for 5 parameters:
+	- _**Parameters file**_: this parameter can be fed either by dragging and dropping the parameters file to the blank space or by using the "browse" button. NB: in case Step 3 is pressed after Step 1 or 2 has been pressed, the field is already filled with the proper link.
+	- _**Weka model file**_: this parameter can be fed either by dragging and dropping the model file to the blank space or by using the "browse" button. NB: The model file used in production can be found [here](https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/IJ-Weka_Model/).
+	- _**Number of layers cells to detect**_: this defines how far from the activation cells quantification should be performed. A value of 2 will consider two layers of cells in both directions (4 cells in total).
+	- _**Minimum cell size (microns)**_: self-explanatory, allows excluding debris and small cells from detection.
+	- _**Detection ROIs enlargement (pixels)**_: as the cells are detected from the cell walls, the actual ROIs might be shrunk as compared to the actual cells borders. This parameters allows compensating for this artefact by dilating the detected ROIs.
+
+<p align=center>
+	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step3.png">
+</p>			
+
+2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt.
+3. For each dataset, for each sequence:
+	1. The projection is loaded.
+	2. In case orientation has been labelled as reversed, the image is flipped horizontally.
+	3. Channels are splitted, only channel 2 (cell walls) being retained.
+	4. Trainable Weka segmentation 2D plugin (See the [documentation of the plugin here](https://imagej.net/plugins/tws/)) is called, using the provided model, to perform cells segmentation.
+	5. An automated threshold is set to 0, corresponding the the "cell walls" category on the classified image.
+	6. Mesurements are set to quantify the area an integrated density (ie total fluorescence) in each ROI.
+	7. The "Analyze Particles" function is called, isolating individual cells which size is below the user-defined limit. The ROIs are pushed to the ROI Manager.
+	8. Based on the highest integrated density, the activated cell is identified.
+	9. The two bording cells from the first layer are identified by fitting the activated cell's oulines to an ellipse. The angle of its minor axis gives a rough approximate of the direction along which the bording cells will be found, its length and approximate of the intercellular distance. It is multiplied by 2 and a line roi is created from the activated cell, towards the tip root or the opposite direction. The centre of the bording cell is found as the second local minimum along this line (first minimum being within the activated cell itself).
+	10. For each bording cell from the first layer on, the reference cell is taken from the axis between the activated cell and the previous bording layer.
+	11. The Background Cell is identified as the detected cell that is the furthest away from the Activated Cell.
+	12. Based on these rules, the ROIs are identified, the ROI Manager is emptied the loaded with the relevent ROIs. Each individual ROI is properly renamed.
+	13. A jpg image is saved is saved under output_folder/Detection_Checks/Lif_filename_without_extension/FRAP_XX.jpg, presenting the dual channel image, overlayed with the named ROIs.
+	14. The corresponding registered stack is loaded from output_folder/Registered/Lif_filename_without_extension/FRAP_XX.zip.
+	15. In case orientation has been labelled as reversed, the image is flipped horizontally.
+	16. ROIs are overlayed to it.
+	17. The stack, carying the ROIs as an overlay, is saved under output_folder/Registered_Oriented_with_ROIs/Lif_filename_without_extension/FRAP_XX.zip.
+5. Once all datasets have been processed, parameters are stored in the output_folder/params.txt file, the "reverse tag" being set to false for all the images.
+
+
+#### Step 4: Review ROIs & quantify
+This final tool allows cells segmentation reviewing and performs quantifications as follows:
+
+1. As the user presses the Step 4 button, a graphical user interface (GUI) pops-up asking for 5 parameters:
 	- _**Parameters file**_: this parameter can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button. NB: in case Step 3 is pressed after Step 1 or 2 has been pressed, the field is already filled with the proper link.
 	- _**Number of layers cells to detect**_: this defines how far from the activation cells quantification should be performed. A value of 2 will consider two layers of cells in both directions (4 cells in total).
 	- _**Background subtraction radius (pixels)**_: this parameter is used as the influence radius, when calling the "subtract background" function in order to ease the cell detection process..
@@ -185,6 +221,8 @@ The Colab script will take care of compiling all the informations into XLSX file
 <p align=center>
 	<em><b>Example of XLSX output</b></em>
 </p>
+
+### 
 
 ## How to install/use it ?
 
