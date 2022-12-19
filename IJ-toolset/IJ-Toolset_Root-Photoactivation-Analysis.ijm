@@ -116,6 +116,8 @@ run("Close All");
 	saveParameters(out);
 	prepareDataForUpload();
 	
+	paramsFile=List.get("out")+"params.txt";
+	
 	//Launch the colab script
 	showMessage("Next step: data compilation with Python", "A web browser window will pop-up\nwith the Google Colab script to compile the data:\nfollow the instructions.");
 	exec("open", "https://colab.research.google.com/github/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/Python_Script/Colab_Root_Photoactivation_Analysis.ipynb");
@@ -253,14 +255,15 @@ function lifToZip(in, fileName, radMed, out){
 		Ext.getSeriesName(seriesName);
 
 		if(indexOf(seriesName, "FRAP Series")!=-1){
-			getStack(seriesName);
+			
+			run("Bio-Formats Importer", "open=["+in+fileName+".lif] autoscale color_mode=Composite rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT series_"+(i+1));
 			name=substring(seriesName, 0, lastIndexOf(seriesName, "/"));
 			
 			rename("Prebleach");
 			
 			Ext.setSeries(i+1);
 			Ext.getSeriesName(seriesName);
-			getStack(seriesName);
+			run("Bio-Formats Importer", "open=["+in+fileName+".lif] autoscale color_mode=Composite rois_import=[ROI manager] view=Hyperstack stack_order=XYCZT series_"+(i+2));
 			
 			rename("Postbleach");
 			
@@ -285,26 +288,6 @@ function lifToZip(in, fileName, radMed, out){
 		}
 	}
 	Ext.close();
-}
-
-//-------------------------------------------------------
-function getStack(seriesName){
-		Ext.getImageCount(imageCount);
-			
-		for(j=0; j<imageCount; j++){
-			Ext.openImage("", j);
-			rename("Img_"+j);
-		}
-
-		if(imageCount>1) run("Images to Stack", "name=["+seriesName+"] title=Img_ use");
-
-		Ext.getDimensionOrder(dimOrder);
-
-		Ext.getSizeZ(sizeZ);
-		Ext.getSizeC(sizeC);
-		Ext.getSizeT(sizeT);
-
-		if(imageCount>1) run("Stack to Hyperstack...", "order=xyczt(default) channels="+sizeC+" slices="+sizeZ+" frames="+sizeT+" display=Composite");
 }
 
 //-------------------------------------------------------
@@ -543,6 +526,7 @@ function measureCells(stack){
 	run("Remove Overlay");
 	run("From ROI Manager"); 
 	run("Labels...", "color=white font=12 show use");
+	saveAs("ZIP", proj);
 	saveAs("Jpeg", replace(replace(stack, "Registered_Oriented_with_ROIs", "Detection_Checks"), ".zip", ".jpg"));
 	
 	open(stack);
