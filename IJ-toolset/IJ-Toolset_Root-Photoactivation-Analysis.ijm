@@ -29,7 +29,7 @@ macro "Lif to Zip Action Tool - N66C633D5aD6aCc99D7eC08cD81C800D2eCcefC8acC06bCc
 	lifNames=getFilteredFileNamesWoExtension(in, ".lif");
 	createDataStructure(lifNames);
 	
-	//setBatchMode(true); 
+	//setBatchMode(true); Batch mode is screwing the BioFormat plugin: duplicate extract the same dataset
 	for(i=0; i<lifNames.length;i++){
 		lifToZip(in, lifNames[i], radMed, out);
 	}
