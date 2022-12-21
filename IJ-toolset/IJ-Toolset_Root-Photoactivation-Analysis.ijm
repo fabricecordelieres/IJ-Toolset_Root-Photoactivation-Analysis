@@ -1,6 +1,6 @@
 //-----------------GLOBAL VARIABLES----------------------
 //IO folders
-var macroVersion="1.3";
+var macroVersion="1.1";
 var wekaVersion="v3.3.2";
 var in="";
 var out="";
@@ -102,10 +102,6 @@ run("Close All");
 		files=getFilteredFileNamesWoExtension(folder, ".zip");
 		for(j=0; j<files.length; j++){
 			stack=folder+files[j]+".zip";
-			flip=List.get(paths[i]+files[j]);
-			if(flip==""){
-				flip=0;
-			}
 			roiManager("UseNames", "true");
 			measureCells(stack);
 		}
