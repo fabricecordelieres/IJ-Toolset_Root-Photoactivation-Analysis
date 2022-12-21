@@ -139,7 +139,7 @@ This third tool performs automated cells segmentation:
 	6. Mesurements are set to quantify the area an integrated density (ie total fluorescence) in each ROI.
 	7. The "Analyze Particles" function is called, isolating individual cells which size is below the user-defined limit. The ROIs are pushed to the ROI Manager.
 	8. Based on the highest integrated density, the activated cell is identified.
-	9. The two bording cells from the first layer are identified by fitting the activated cell's oulines to an ellipse. The angle of its minor axis gives a rough approximate of the direction along which the bording cells will be found, its length and approximate of the intercellular distance. It is multiplied by 2 and a line roi is created from the activated cell, towards the tip root or the opposite direction. The centre of the bording cell is found as the second local minimum along this line (first minimum being within the activated cell itself).
+	9. The two bording cells from the first layer are identified by fitting the activated cell's oulines to an ellipse. The angle of its minor axis gives a rough approximate of the direction along which the bording cells will be found, its length and approximate of the intercellular distance. It is multiplied by 2 and a line roi is created from the activated cell, towards the tip root or the opposite direction. The centre of the bording cell is found as the second local minimum along this line (first minimum being within the activated cell itself).		
 	10. For each bording cell from the first layer on, the reference cell is taken from the axis between the activated cell and the previous bording layer.
 	11. The Background Cell is identified as the detected cell that is the furthest away from the Activated Cell.
 	12. Based on these rules, the ROIs are identified, the ROI Manager is emptied the loaded with the relevent ROIs. Each individual ROI is properly renamed.
@@ -148,21 +148,25 @@ This third tool performs automated cells segmentation:
 	15. In case orientation has been labelled as reversed, the image is flipped horizontally.
 	16. ROIs are overlayed to it.
 	17. The stack, carying the ROIs as an overlay, is saved under output_folder/Registered_Oriented_with_ROIs/Lif_filename_without_extension/FRAP_XX.zip.
+
+<p align=center>
+	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/Illust_find-cells.jpg">
+</p>
+<p align=center>
+	<em><b>Example of how neighbour cells are found, based on oriented local maxima detection</b></em>
+</p>
+
 5. Once all datasets have been processed, parameters are stored in the output_folder/params.txt file, the "reverse tag" being set to false for all the images.
 
 
 #### Step 4: Review ROIs & quantify
 This final tool allows cells segmentation reviewing and performs quantifications as follows:
 
-1. As the user presses the Step 4 button, a graphical user interface (GUI) pops-up asking for 5 parameters:
-	- _**Parameters file**_: this parameter can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button. NB: in case Step 3 is pressed after Step 1 or 2 has been pressed, the field is already filled with the proper link.
-	- _**Number of layers cells to detect**_: this defines how far from the activation cells quantification should be performed. A value of 2 will consider two layers of cells in both directions (4 cells in total).
-	- _**Background subtraction radius (pixels)**_: this parameter is used as the influence radius, when calling the "subtract background" function in order to ease the cell detection process..
-	- _**Minimum cell size (microns)**_: self-explanatory, allows excluding debris and small cells from detection.
-	- _**Detection ROIs enlargement (pixels)**_: as the cells are detected from the cell walls, the actual ROIs might be shrunk as compared to the actual cells borders. This parameters allows compensating for this artefact by dilating the detected ROIs.
+1. As the user presses the Step 4 button, a graphical user interface (GUI) pops-up asking for the parameters file:
+	- _**Parameters file**_: this parameter can be fed either by dragging and dropping the folder to the blank space or by using the "browse" button. NB: in case Step 4 is pressed after Step 1, 2 or 3 has been pressed, the field is already filled with the proper link.
 
 <p align=center>
-	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step3.png">
+	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step4.png">
 </p>			
 
 2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt.
