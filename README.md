@@ -172,23 +172,17 @@ This final tool allows cells segmentation reviewing and performs quantifications
 2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt.
 3. For each dataset, for each sequence:
 	1. The projection is loaded.
-	2. In case orientation has been labelled as reversed, the image is flipped horizontally.
-	3. Channels are splitted, only channel 2 (cell walls) being retained.
-	4. Image's contrast is locally enhanced using Fiji's integrated ["CLAHE" plugin](https://imagej.net/plugins/clahe) (fixed parameters: block size: 127, histogram bin: 256, maximum slope: 3).
-	5. The image is subjected to background subtraction.
-	6. An automated threshold is set, using the ["Yen" algorithm](https://imagej.net/plugins/auto-threshold).
-	7. Mesurements are set to quantify the area an integrated density (ie total fluorescence) in each ROI.
-	8. The "Analyze Particles" function is called, isolating individual cells which size is below the user-defined limit. The ROIs are pushed to the ROI Manager.
-	9. Based on the highest integrated density, the activated cell is identified.
-	10. The two bording cells from the first layer are identified as the closest cells from the activated cells. They are oriented as the root tip is supposed to be on the left side: Bording Cell 1 is on the left side of the Activated cell, Bording Cell 1' is on its right (ie $x_{Bording\ Cell 1}$ < $x_{Activated\ Cell}$ < $x_{Bording\ Cell 1'}$).
-	11. For each bording cell from the first layer on, the reference cell is taken from the previous bording layer, Bording Cell N being identified on the left side of Bording Cell N-1 and Bording Cell N' being identified on the right side of Bording Cell N-1'.
-	12. The Background Cell is identified as the detected cell that is the furthest away from the Activated Cell.
-	13. Based on these rules, the ROIs are identified, the ROI Manager is emptied the loaded with the relevent ROIs. Each individual ROI is properly renamed.
-	14. A jpg image is saved is saved under output_folder/Detection_Checks/Lif_filename_without_extension/FRAP_XX.jpg, presenting the dual channel image, overlayed with the named ROIs.
-	15. The corresponding registered stack is loaded from output_folder/Registered/Lif_filename_without_extension/FRAP_XX.zip.
-	16. In case orientation has been labelled as reversed, the image is flipped horizontally.
-	17. ROIs are overlayed to it, and the "Multi-measure" function is called. It generates a results table, save under output_folder/csv/Lif_filename_without_extension/FRAP_XX.csv.
-	18. The stack, carying the ROIs as an overlay, is saved under output_folder/Registered_Oriented_with_ROIs/Lif_filename_without_extension/FRAP_XX.zip.
+	2. The user is presented with the detected ROIs overlaid to the projection.
+	3. A GUI pops-up, aksing is detections are Ok.
+		- Should the answer be Yes, the registered stack (loaded from output_folder/Registered/Lif_filename_without_extension/FRAP_XX.zip) is opened and the "Multi-measure" function is called. It generates a results table, saved under output_folder/csv/Lif_filename_without_extension/FRAP_XX.csv.
+		- Should the answer be No, a new interface will appear,containing the procedure on how to correct ROIs:
+			1. Click on the ROI to modify in the ROI Manager.
+			2. Draw/adjust the ROI.
+			3. Click on 'update' in the ROI Manager.
+			4. Repeat for all ROIs then press Ok.
+			5. A new version of both the projection and the registered stack overlaid with the ROIs are saved.
+			6. Measurements are then perfomed as if the Yes button had been clicked.
+		- Should the answer be Cancel, the macro is killed and process is stopped.
 5. Once all datasets have been processed, parameters are stored in the output_folder/params.txt file.
 6. A temporary folder is created under output_folder/\_dataToUpload:
 	1. For each lif file, a subfolder is created: output_folder/\_dataToUpload/Lif_filename_without_extension/
@@ -230,7 +224,7 @@ The Colab script will take care of compiling all the informations into XLSX file
 
 ## How to install/use it ?
 
-The [release page](https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/releases/tag/v1.0) displays a download link for Root_Photoactivation_Analysis_Workflow.zip file. Once unzipped, it contains everything that needs to be installed.
+The [release page](https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/releases/tag/v1.1) displays a download link for Root_Photoactivation_Analysis_Workflow.zip file. Once unzipped, it contains everything that needs to be installed.
 
 *The toolset mostly relies on functions and plugins that are alredy embarqued within Fiji. Step 3, however, requires a separate plugin that should be installed before using the toolset:*
 1. Download [Zip_It.jar](https://github.com/fabricecordelieres/IJ-Plugin_Zip-It/releases/tag/v1.0).
@@ -248,3 +242,7 @@ To use the toolset, first activate it, then press the buttons.
 
 ## Revisions:
 ### Version 1: 22/10/28 
+### Version 1.1: 22/12/21
+- Corrected a bug where bioformat would call several times the same dataset from the lif file when launched in batch mode.
+- Corrected a bug where the Collab Script would fail due to a lack of detection of bording cells: in case the cell detection fails for a cell, a ROI is added at the top-left corner of the image.
+- 
