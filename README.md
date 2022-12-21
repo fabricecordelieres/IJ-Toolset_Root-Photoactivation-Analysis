@@ -244,5 +244,6 @@ To use the toolset, first activate it, then press the buttons.
 ### Version 1: 22/10/28 
 ### Version 1.1: 22/12/21
 - Corrected a bug where bioformat would call several times the same dataset from the lif file when launched in batch mode.
+- Modified the segmentation process: it now runs through the Weka segmentation pugin, using a provided model, trained on a variety of acquisitions.
 - Corrected a bug where the Collab Script would fail due to a lack of detection of bording cells: in case the cell detection fails for a cell, a ROI is added at the top-left corner of the image.
-- 
+- Added a detections correction step.
