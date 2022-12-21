@@ -129,7 +129,7 @@ This third tool performs automated cells segmentation:
 	<img src="https://github.com/fabricecordelieres/IJ-Toolset_Root-Photoactivation-Analysis/blob/main/images/GUI_Step3.png">
 </p>			
 
-2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt.
+2. Once the GUI has been Oked, all parameters are saved under output_folder/params.txt. The Weka model is also copied to output_folder/Weka_model.model.
 3. For each dataset, for each sequence:
 	1. The projection is loaded.
 	2. In case orientation has been labelled as reversed, the image is flipped horizontally.
